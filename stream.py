@@ -3,6 +3,8 @@ import random
 
 st.title("Kantine AI - Uge menu generator")
 
+st.body("Dette er en test")
+
 # INPUTS
 antal = st.slider("Antal kuverter", 20, 500, 120)
 budget = st.slider("Budget pr. kuvert (kr)", 20, 80, 45)
