@@ -6,7 +6,7 @@ st.title("Kantine AI - Uge menu generator klaus")
 # INPUTS
 antal = st.slider("Antal kuverter", 20, 500, 120)
 budget = st.slider("Budget pr. kuvert (kr)", 20, 80, 45)
-budget2 = st.slider("Budget pr. kuvert (kr)", 20, 80, 45)
+
 
 vegetar = st.checkbox("Mindst 1 vegetarret", True)
 fisk = st.checkbox("Tillad fisk", True)
