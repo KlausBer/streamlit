@@ -1,7 +1,6 @@
 import streamlit as st
 from anthropic import Anthropic
 
-ANTHROPIC_API_KEY="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"
 
 st.title("🍽️ Kantine AI - Uge menu (Claude)")
 
