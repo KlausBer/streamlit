@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 
-st.title("Kantine AI - Uge menu generator")
+st.title("Kantine AI - Uge menu generator klaus")
 
 # INPUTS
 antal = st.slider("Antal kuverter", 20, 500, 120)
