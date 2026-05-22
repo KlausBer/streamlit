@@ -1,61 +1,55 @@
 import streamlit as st
-import random
+from anthropic import Anthropic
 
-st.title("Kantine AI - Uge menu generator klaus")
+st.title("🍽️ Kantine AI - Uge menu (Claude)")
+
+client = Anthropic(api_key=st.secrets["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"])
 
 # INPUTS
-antal = st.slider("Antal kuverter", 20, 500, 120)
+antal = st.slider("Antal personer", 20, 500, 120)
 budget = st.slider("Budget pr. kuvert (kr)", 20, 80, 45)
 
-
 vegetar = st.checkbox("Mindst 1 vegetarret", True)
-fisk = st.checkbox("Tillad fisk", True)
+fisk = st.checkbox("Fisk tilladt", True)
 
-# Simpel “mad database”
-retter = [
-    {"navn": "Lasagne", "type": "kød"},
-    {"navn": "Kylling i karry", "type": "kød"},
-    {"navn": "Frikadeller", "type": "kød"},
-    {"navn": "Taco bar", "type": "kød"},
-    {"navn": "Vegetar lasagne", "type": "vegetar"},
-    {"navn": "Buddha bowl", "type": "vegetar"},
-    {"navn": "Pasta pesto", "type": "vegetar"},
-    {"navn": "Fiskefilet", "type": "fisk"},
-]
+stil = st.selectbox(
+    "Madstil",
+    ["klassisk dansk", "sund", "comfort food", "varieret", "budgetvenlig"]
+)
 
-uger = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag"]
+if st.button("Generér menu med Claude"):
+    
+    prompt = f"""
+Du er en erfaren kantinekok.
 
-def filtrer_retter():
-    valgte = retter.copy()
+Lav en uge-menu (mandag til fredag).
 
-    if not fisk:
-        valgte = [r for r in valgte if r["type"] != "fisk"]
+Krav:
+- {antal} personer
+- budget: {budget} kr pr kuvert
+- vegetar: {vegetar}
+- fisk tilladt: {fisk}
+- stil: {stil}
+- dansk kantinemad
+- god variation gennem ugen
 
-    return valgte
+Svar KUN i dette format:
 
-if st.button("Generér menu"):
-    valgte = filtrer_retter()
+Mandag: ...
+Tirsdag: ...
+Onsdag: ...
+Torsdag: ...
+Fredag: ...
+"""
 
-    menu = []
+    message = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=800,
+        temperature=0.7,
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+    )
 
-    vegetar_brugt = False
-
-    for dag in uger:
-        mulige = valgte
-
-        # tving vegetar hvis nødvendigt
-        if vegetar and not vegetar_brugt:
-            mulige = [r for r in mulige if r["type"] == "vegetar"]
-
-        valg = random.choice(mulige)
-        menu.append((dag, valg["navn"]))
-
-        if valg["type"] == "vegetar":
-            vegetar_brugt = True
-
-    st.subheader("Forslag til uge-menu")
-
-    for dag, ret in menu:
-        st.write(f"**{dag}:** {ret}")
-
-    st.info(f"Budget: {budget} kr pr kuvert | Kuverter: {antal}")
+    st.subheader("📋 Forslag til uge-menu")
+    st.text(message.content[0].text)
